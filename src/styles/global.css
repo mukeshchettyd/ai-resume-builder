@@ -1836,3 +1836,321 @@ textarea.input-field {
 .resume-link-icon:hover {
     color: var(--color-text);
 }
+
+/* ================================================================
+   TEMPLATE & COLOR PICKERS
+   ================================================================ */
+.picker-container {
+    margin-bottom: var(--space-32);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-24);
+}
+
+.picker-label {
+    font-size: var(--text-xs);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+    color: var(--color-muted);
+    margin-bottom: var(--space-12);
+}
+
+/* ---- Template Picker ---- */
+.tpl-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-16);
+}
+
+.tpl-card {
+    background: none;
+    border: 2px solid transparent;
+    border-radius: var(--radius-lg);
+    padding: var(--space-8);
+    cursor: pointer;
+    text-align: left;
+    transition: all var(--transition-fast);
+    display: flex;
+    flex-direction: column;
+}
+
+.tpl-card:hover {
+    background-color: var(--color-bg);
+}
+
+.tpl-card--active {
+    border-color: #3b82f6;
+    background-color: #f0f7ff;
+}
+
+.tpl-preview-box {
+    aspect-ratio: 1 / 1.4;
+    background-color: #fff;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    margin-bottom: var(--space-10);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.tpl-card--active .tpl-preview-box {
+    border-color: rgba(59, 130, 246, 0.4);
+}
+
+.tpl-checkmark {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 18px;
+    height: 18px;
+    background-color: #3b82f6;
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3px;
+    z-index: 2;
+}
+
+.tpl-name {
+    display: block;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-text);
+}
+
+.tpl-desc {
+    display: block;
+    font-size: 11px;
+    color: var(--color-muted);
+}
+
+/* Thumb Internal Drawings */
+.tpl-thumb-inner {
+    width: 100%;
+    height: 100%;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.tpl-thumb-line {
+    height: 2px;
+    background-color: #eee;
+    width: 100%;
+}
+
+.tpl-thumb-header {
+    height: 6px;
+    background-color: #ddd;
+    margin-bottom: 2px;
+}
+
+.tpl-thumb-section {
+    height: 3px;
+    background-color: #eee;
+    width: 40%;
+    margin: 4px 0 2px;
+}
+
+.tpl-thumb--modern {
+    flex-direction: row;
+    padding: 0;
+    gap: 0;
+}
+
+.tpl-thumb-sidebar {
+    width: 30%;
+    height: 100%;
+    opacity: 0.8;
+}
+
+.tpl-thumb-main {
+    flex: 1;
+    padding: 10px 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.tpl-thumb--classic .tpl-thumb-header {
+    border-bottom: 1px solid;
+    background: none;
+}
+
+/* ---- Color Picker ---- */
+.color-list {
+    display: flex;
+    gap: var(--space-12);
+}
+
+.color-swatch {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    cursor: pointer;
+    background-color: var(--swatch-color);
+    padding: 2px;
+    background-clip: content-box;
+    transition: transform 0.2s, border-color 0.2s;
+}
+
+.color-swatch:hover {
+    transform: scale(1.15);
+}
+
+.color-swatch--active {
+    border-color: var(--swatch-color);
+}
+
+/* ================================================================
+   TEMPLATE VARIANTS (REFINED)
+   ================================================================ */
+
+/* ---- Classic ---- */
+.resume-tpl--classic {
+    font-family: 'Georgia', serif;
+}
+
+.resume-tpl--classic .resume-header {
+    text-align: center;
+    border-bottom: 2px solid var(--accent-color);
+}
+
+.resume-tpl--classic .resume-section-title {
+    text-align: center;
+    border-bottom: 1px solid var(--color-border);
+    color: var(--accent-color);
+    margin-top: var(--space-24);
+}
+
+/* ---- Modern (2-Column) ---- */
+.resume-tpl--modern {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    padding: 0;
+    min-height: 800px;
+}
+
+.resume-modern-sidebar {
+    background-color: var(--accent-color);
+    color: #fff;
+    padding: var(--space-32) var(--space-20);
+}
+
+.resume-modern-main {
+    padding: var(--space-32) var(--space-24);
+    background-color: #fff;
+}
+
+.resume-tpl--modern .resume-name {
+    font-size: var(--text-2xl);
+    margin-bottom: var(--space-16);
+    color: #fff;
+}
+
+.resume-tpl--modern .resume-contact {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-8);
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: var(--space-40);
+}
+
+.resume-tpl--modern .resume-contact-divider {
+    display: none;
+}
+
+.resume-tpl--modern .resume-section-title {
+    color: var(--accent-color);
+    border-bottom: 2px solid var(--accent-color);
+    padding-bottom: var(--space-4);
+}
+
+.resume-modern-sidebar .resume-section-title {
+    color: #fff;
+    border-bottom-color: rgba(255, 255, 255, 0.3);
+    font-size: var(--text-xs);
+}
+
+.resume-tpl--modern .resume-skill-tag {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: #fff;
+    border: none;
+}
+
+.resume-modern-main .resume-skill-tag {
+    background-color: var(--color-bg);
+    color: var(--color-text);
+}
+
+/* ---- Minimal ---- */
+.resume-tpl--minimal {
+    font-family: 'Inter', sans-serif;
+    border: none;
+    box-shadow: none;
+}
+
+.resume-tpl--minimal .resume-section-title {
+    color: var(--accent-color);
+    font-weight: 700;
+}
+
+.resume-tpl--minimal .resume-name {
+    color: var(--accent-color);
+}
+
+/* ---- Toast Notification ---- */
+.toast-notification {
+    position: fixed;
+    bottom: var(--space-40);
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--color-text);
+    color: var(--color-card-bg);
+    padding: var(--space-12) var(--space-24);
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    gap: var(--space-12);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    box-shadow: var(--shadow-lg);
+    z-index: 1000;
+    animation: toast-slide-up 0.3s ease-out;
+}
+
+.toast-icon {
+    width: 20px;
+    height: 20px;
+    background-color: #10b981;
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+}
+
+@keyframes toast-slide-up {
+    from {
+        transform: translate(-50%, 20px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translate(-50%, 0);
+        opacity: 1;
+    }
+}
+
+@media print {
+    .toast-notification {
+        display: none !important;
+    }
+}

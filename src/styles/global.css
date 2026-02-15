@@ -1454,3 +1454,174 @@ textarea.input-field {
     font-size: var(--text-xs);
     line-height: var(--leading-normal);
 }
+
+/* ================================================================
+   EXPORT UI
+   ================================================================ */
+.export-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-24);
+    background-color: var(--color-card-bg);
+    border: var(--border-width) solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-16) var(--space-24);
+    margin-bottom: var(--space-32);
+}
+
+.export-bar-right {
+    display: flex;
+    gap: var(--space-12);
+}
+
+.export-warning {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-16);
+    background-color: rgba(184, 134, 11, 0.04);
+    border: var(--border-width) solid var(--color-warning);
+    border-radius: var(--radius-lg);
+    padding: var(--space-16) var(--space-24);
+    margin-bottom: var(--space-32);
+    position: relative;
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.export-warning-icon {
+    font-size: var(--text-xl);
+    color: var(--color-warning);
+}
+
+.export-warning-content {
+    flex: 1;
+}
+
+.export-warning-title {
+    display: block;
+    font-weight: 600;
+    color: var(--color-text);
+    margin-bottom: var(--space-8);
+}
+
+.export-warning-list {
+    margin: 0;
+    padding-left: var(--space-20);
+    font-size: var(--text-sm);
+    color: var(--color-muted);
+}
+
+.export-warning-dismiss {
+    background: none;
+    border: none;
+    color: var(--color-muted);
+    cursor: pointer;
+    font-size: var(--text-sm);
+    opacity: 0.6;
+    transition: opacity 0.2s;
+}
+
+.export-warning-dismiss:hover {
+    opacity: 1;
+}
+
+/* ================================================================
+   PRINT STYLES
+   ================================================================ */
+@media print {
+
+    /* Basics */
+    @page {
+        margin: 0.5in;
+        size: auto;
+    }
+
+    body {
+        background-color: #FFFFFF !important;
+        margin: 0;
+        padding: 0;
+    }
+
+    /* Hide UI elements */
+    nav,
+    .topbar,
+    #builder-form,
+    .preview-page-header,
+    .export-bar,
+    .export-warning,
+    #ats-score-card,
+    #template-tabs,
+    .preview-panel-header,
+    .btn,
+    footer {
+        display: none !important;
+    }
+
+    /* Reset layout for print */
+    .preview-page,
+    .builder-layout,
+    .builder-preview-panel {
+        display: block !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        width: 100% !important;
+        min-height: 0 !important;
+        background-color: transparent !important;
+    }
+
+    #printable-resume {
+        width: 100% !important;
+    }
+
+    .resume-shell {
+        border: none !important;
+        padding: 0 !important;
+        box-shadow: none !important;
+        width: 100% !important;
+        min-height: 0 !important;
+    }
+
+    /* Print Precision */
+    .resume-section {
+        break-inside: avoid;
+        margin-bottom: var(--space-24) !important;
+    }
+
+    .resume-entry {
+        break-inside: avoid;
+    }
+
+    .resume-summary {
+        font-style: normal !important;
+    }
+
+    /* Force B&W */
+    * {
+        color: #000000 !important;
+        text-shadow: none !important;
+        background: transparent !important;
+        box-shadow: none !important;
+    }
+
+    .resume-skill-tag {
+        border: 1px solid #000 !important;
+        background: none !important;
+    }
+
+    a {
+        text-decoration: none !important;
+        color: #000 !important;
+    }
+}

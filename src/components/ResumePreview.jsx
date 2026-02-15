@@ -2,6 +2,7 @@
    ResumePreview — Live Preview Component
    Renders the structured resume from form data.
    Used in both Builder (side panel) and Preview page (full page).
+   Empty sections are hidden — only populated sections render.
    ================================================================ */
 
 function ResumePreview({ data }) {
@@ -11,10 +12,7 @@ function ResumePreview({ data }) {
         ? skills.split(',').map(s => s.trim()).filter(Boolean)
         : []
 
-    const hasContent =
-        personal.name || personal.email || summary ||
-        education.length > 0 || experience.length > 0 ||
-        projects.length > 0 || skillList.length > 0
+    const hasAnyContact = personal.email || personal.phone || personal.location
 
     return (
         <div className="resume-shell" id="resume-preview">
@@ -29,28 +27,25 @@ function ResumePreview({ data }) {
                     {personal.phone && <span>{personal.phone}</span>}
                     {(personal.email || personal.phone) && personal.location && <span className="resume-contact-divider"></span>}
                     {personal.location && <span>{personal.location}</span>}
-                    {!personal.email && !personal.phone && !personal.location && (
+                    {!hasAnyContact && (
                         <span className="resume-empty-text">email · phone · location</span>
                     )}
                 </div>
             </div>
 
             {/* ---- Summary ---- */}
-            {(summary || !hasContent) && (
+            {summary && (
                 <div className="resume-section">
-                    <h3 className="resume-section-title">Professional Summary</h3>
-                    {summary
-                        ? <p className="resume-summary">{summary}</p>
-                        : <p className="resume-empty-text">A brief professional summary will appear here...</p>
-                    }
+                    <h3 className="resume-section-title">Summary</h3>
+                    <p className="resume-summary">{summary}</p>
                 </div>
             )}
 
             {/* ---- Education ---- */}
-            {(education.length > 0 || !hasContent) && (
+            {education.length > 0 && (
                 <div className="resume-section">
                     <h3 className="resume-section-title">Education</h3>
-                    {education.length > 0 ? education.map(entry => (
+                    {education.map(entry => (
                         <div className="resume-entry" key={entry.id}>
                             <div className="resume-entry-header">
                                 <span className="resume-entry-title">{entry.institution || 'Institution'}</span>
@@ -61,17 +56,15 @@ function ResumePreview({ data }) {
                             {entry.degree && <div className="resume-entry-subtitle">{entry.degree}</div>}
                             {entry.description && <div className="resume-entry-desc">{entry.description}</div>}
                         </div>
-                    )) : (
-                        <p className="resume-empty-text">Education entries will appear here...</p>
-                    )}
+                    ))}
                 </div>
             )}
 
             {/* ---- Experience ---- */}
-            {(experience.length > 0 || !hasContent) && (
+            {experience.length > 0 && (
                 <div className="resume-section">
                     <h3 className="resume-section-title">Experience</h3>
-                    {experience.length > 0 ? experience.map(entry => (
+                    {experience.map(entry => (
                         <div className="resume-entry" key={entry.id}>
                             <div className="resume-entry-header">
                                 <span className="resume-entry-title">{entry.role || 'Role'}{entry.company ? ` — ${entry.company}` : ''}</span>
@@ -81,17 +74,15 @@ function ResumePreview({ data }) {
                             </div>
                             {entry.description && <div className="resume-entry-desc">{entry.description}</div>}
                         </div>
-                    )) : (
-                        <p className="resume-empty-text">Work experience entries will appear here...</p>
-                    )}
+                    ))}
                 </div>
             )}
 
             {/* ---- Projects ---- */}
-            {(projects.length > 0 || !hasContent) && (
+            {projects.length > 0 && (
                 <div className="resume-section">
                     <h3 className="resume-section-title">Projects</h3>
-                    {projects.length > 0 ? projects.map(entry => (
+                    {projects.map(entry => (
                         <div className="resume-entry" key={entry.id}>
                             <div className="resume-entry-header">
                                 <span className="resume-entry-title">{entry.name || 'Project Name'}</span>
@@ -99,40 +90,30 @@ function ResumePreview({ data }) {
                             </div>
                             {entry.description && <div className="resume-entry-desc">{entry.description}</div>}
                         </div>
-                    )) : (
-                        <p className="resume-empty-text">Project entries will appear here...</p>
-                    )}
+                    ))}
                 </div>
             )}
 
             {/* ---- Skills ---- */}
-            {(skillList.length > 0 || !hasContent) && (
+            {skillList.length > 0 && (
                 <div className="resume-section">
                     <h3 className="resume-section-title">Skills</h3>
-                    {skillList.length > 0 ? (
-                        <div className="resume-skills">
-                            {skillList.map((skill, i) => (
-                                <span className="resume-skill-tag" key={i}>{skill}</span>
-                            ))}
-                        </div>
-                    ) : (
-                        <p className="resume-empty-text">Skills will appear here as tags...</p>
-                    )}
+                    <div className="resume-skills">
+                        {skillList.map((skill, i) => (
+                            <span className="resume-skill-tag" key={i}>{skill}</span>
+                        ))}
+                    </div>
                 </div>
             )}
 
             {/* ---- Links ---- */}
-            {(links.github || links.linkedin || !hasContent) && (
+            {(links.github || links.linkedin) && (
                 <div className="resume-section">
                     <h3 className="resume-section-title">Links</h3>
-                    {(links.github || links.linkedin) ? (
-                        <div className="resume-links">
-                            {links.github && <a href={links.github} target="_blank" rel="noopener noreferrer">GitHub</a>}
-                            {links.linkedin && <a href={links.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a>}
-                        </div>
-                    ) : (
-                        <p className="resume-empty-text">GitHub and LinkedIn links will appear here...</p>
-                    )}
+                    <div className="resume-links">
+                        {links.github && <a href={links.github} target="_blank" rel="noopener noreferrer">GitHub</a>}
+                        {links.linkedin && <a href={links.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a>}
+                    </div>
                 </div>
             )}
         </div>

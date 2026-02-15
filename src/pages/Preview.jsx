@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import ResumePreview from '../components/ResumePreview'
 
-const STORAGE_KEY = 'aiResumeBuilderData'
+const STORAGE_KEY = 'resumeBuilderData'
 
 const EMPTY_STATE = {
     personal: { name: '', email: '', phone: '', location: '' },

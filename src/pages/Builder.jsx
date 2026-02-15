@@ -1,6 +1,7 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useMemo } from 'react'
 import ResumePreview from '../components/ResumePreview'
 import SAMPLE_DATA from '../data/sampleData'
+import { computeATSScore, generateSuggestions } from '../utils/atsScoring'
 
 /* ================================================================
    EMPTY STATE
@@ -22,9 +23,9 @@ function generateId(prefix) {
 }
 
 /* ================================================================
-   STORAGE
+   STORAGE — key: resumeBuilderData
    ================================================================ */
-const STORAGE_KEY = 'aiResumeBuilderData'
+const STORAGE_KEY = 'resumeBuilderData'
 
 function loadData() {
     try {
@@ -36,6 +37,15 @@ function loadData() {
 
 function saveData(data) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
+}
+
+/* ================================================================
+   SCORE LABEL HELPER
+   ================================================================ */
+function getScoreLabel(score) {
+    if (score >= 70) return { text: 'Strong', className: 'ats-label--strong' }
+    if (score >= 40) return { text: 'Fair', className: 'ats-label--fair' }
+    return { text: 'Needs Work', className: 'ats-label--weak' }
 }
 
 /* ================================================================
@@ -51,6 +61,11 @@ function Builder() {
             return next
         })
     }, [])
+
+    // ---- ATS Score (computed live) ----
+    const atsResult = useMemo(() => computeATSScore(data), [data])
+    const suggestions = useMemo(() => generateSuggestions(data), [data])
+    const scoreLabel = getScoreLabel(atsResult.score)
 
     // ---- Personal ----
     const setPersonal = (field, value) => {
@@ -531,9 +546,57 @@ function Builder() {
             </div>
 
             {/* ============================================
-          RIGHT: Live Preview Panel
+          RIGHT: Live Preview Panel + ATS Score
           ============================================ */}
             <div className="builder-preview-panel" id="builder-preview">
+                {/* ---- ATS Score Meter ---- */}
+                <div className="ats-score-card" id="ats-score-card">
+                    <div className="ats-score-header">
+                        <span className="ats-score-label">ATS Readiness Score</span>
+                        <span className={`ats-score-status ${scoreLabel.className}`}>{scoreLabel.text}</span>
+                    </div>
+                    <div className="ats-meter" id="ats-meter">
+                        <div className="ats-meter-track">
+                            <div
+                                className="ats-meter-fill"
+                                style={{ width: `${(atsResult.score / atsResult.maxPossible) * 100}%` }}
+                            ></div>
+                        </div>
+                        <div className="ats-meter-value">
+                            <span className="ats-meter-number">{atsResult.score}</span>
+                            <span className="ats-meter-max">/ {atsResult.maxPossible}</span>
+                        </div>
+                    </div>
+
+                    {/* ---- Breakdown ---- */}
+                    <div className="ats-breakdown" id="ats-breakdown">
+                        {atsResult.breakdown.map((item, i) => (
+                            <div className="ats-breakdown-row" key={i}>
+                                <span className={`ats-breakdown-dot ${item.earned > 0 ? 'ats-breakdown-dot--earned' : ''}`}>
+                                    {item.earned > 0 ? '✓' : '○'}
+                                </span>
+                                <span className="ats-breakdown-label">{item.label}</span>
+                                <span className={`ats-breakdown-pts ${item.earned > 0 ? 'ats-breakdown-pts--earned' : ''}`}>
+                                    +{item.earned}
+                                </span>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* ---- Suggestions ---- */}
+                    {suggestions.length > 0 && (
+                        <div className="ats-suggestions" id="ats-suggestions">
+                            <span className="ats-suggestions-title">Suggestions</span>
+                            <ul className="ats-suggestions-list">
+                                {suggestions.map((s, i) => (
+                                    <li className="ats-suggestion-item" key={i}>{s}</li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
+                </div>
+
+                {/* ---- Preview ---- */}
                 <div className="preview-panel-header">
                     <span className="preview-panel-title">Live Preview</span>
                     <span className="preview-panel-badge">Real-time</span>

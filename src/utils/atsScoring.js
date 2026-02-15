@@ -54,9 +54,13 @@ export function computeATSScore(data) {
     }
 
     // 4. ≥ 8 skills → +10
-    const skillList = data.skills
+    const skillList = typeof data.skills === 'string'
         ? data.skills.split(',').map(s => s.trim()).filter(Boolean)
-        : []
+        : [
+            ...(data.skills?.technical || []),
+            ...(data.skills?.soft || []),
+            ...(data.skills?.tools || [])
+        ]
     if (skillList.length >= 8) {
         score += 10
         breakdown.push({ label: 'Skills list has 8+ items', earned: 10, max: 10 })
@@ -133,9 +137,13 @@ export function generateImprovements(data) {
     }
 
     // If skills <8 → suggest expanding
-    const skillList = data.skills
+    const skillList = typeof data.skills === 'string'
         ? data.skills.split(',').map(s => s.trim()).filter(Boolean)
-        : []
+        : [
+            ...(data.skills?.technical || []),
+            ...(data.skills?.soft || []),
+            ...(data.skills?.tools || [])
+        ]
     if (skillList.length < 8) {
         items.push('Add more skills — target at least 8 for stronger keyword matching.')
     }

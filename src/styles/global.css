@@ -1625,3 +1625,214 @@ textarea.input-field {
         color: #000 !important;
     }
 }
+
+/* ================================================================
+   SKILLS & PROJECTS ENHANCEMENTS
+   ================================================================ */
+
+/* ---- Tag Input & Chips ---- */
+.tag-input-container {
+    background-color: var(--color-bg);
+    border: var(--border-width) solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-8) var(--space-12);
+    min-height: 44px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-8);
+    transition: border-color var(--transition-fast);
+}
+
+.tag-input-container:focus-within {
+    border-color: var(--color-text);
+}
+
+.tag-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-8);
+    flex: 1;
+}
+
+.tag-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-4);
+    background-color: var(--color-text);
+    color: var(--color-card-bg);
+    padding: var(--space-4) var(--space-10);
+    border-radius: var(--radius-sm);
+    font-size: var(--text-xs);
+    font-weight: 500;
+}
+
+.tag-remove {
+    background: none;
+    border: none;
+    color: currentColor;
+    opacity: 0.6;
+    cursor: pointer;
+    font-size: 10px;
+    padding: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.2s;
+}
+
+.tag-remove:hover {
+    opacity: 1;
+}
+
+.tag-input-field {
+    flex: 1;
+    min-width: 120px;
+    border: none;
+    background: none;
+    outline: none;
+    font-size: var(--text-sm);
+    color: var(--color-text);
+    padding: var(--space-4) 0;
+}
+
+/* ---- Accordion (Projects) ---- */
+.accordion-entry {
+    border: var(--border-width) solid var(--color-border);
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--space-16);
+    overflow: hidden;
+    background-color: var(--color-card-bg);
+    transition: box-shadow var(--transition-normal);
+}
+
+.accordion-entry--expanded {
+    box-shadow: var(--shadow-sm);
+}
+
+.accordion-header {
+    padding: var(--space-16) var(--space-20);
+    background-color: rgba(17, 17, 17, 0.02);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color var(--transition-fast);
+}
+
+.accordion-header:hover {
+    background-color: rgba(17, 17, 17, 0.04);
+}
+
+.accordion-title {
+    font-weight: 600;
+    font-size: var(--text-sm);
+    color: var(--color-text);
+}
+
+.accordion-controls {
+    display: flex;
+    align-items: center;
+    gap: var(--space-16);
+}
+
+.accordion-icon {
+    font-size: var(--text-lg);
+    color: var(--color-muted);
+    font-family: var(--font-mono);
+}
+
+.accordion-content {
+    padding: var(--space-20);
+    border-top: var(--border-width) solid var(--color-border);
+}
+
+/* ---- Suggestions Button ---- */
+.btn-suggest {
+    margin-left: auto;
+    background: none;
+    border: var(--border-width) solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-6) var(--space-12);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    color: var(--color-text);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: var(--space-8);
+    transition: all var(--transition-fast);
+}
+
+.btn-suggest:hover:not(:disabled) {
+    background-color: var(--color-text);
+    color: var(--color-card-bg);
+}
+
+.btn-suggest--loading {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* ---- Character Counter ---- */
+.char-counter {
+    font-size: 10px;
+    font-family: var(--font-mono);
+    color: var(--color-muted);
+}
+
+.char-counter--error {
+    color: var(--color-accent);
+    font-weight: 600;
+}
+
+/* ---- Grouped Skills (Preview) ---- */
+.resume-skills-grouped {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-12);
+}
+
+.resume-skill-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.resume-skill-group-label {
+    font-size: var(--text-xs);
+    font-weight: 700;
+    color: var(--color-muted);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+}
+
+.resume-tech-stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    margin-top: var(--space-8);
+}
+
+.resume-skill-tag--small {
+    padding: 2px 6px;
+    font-size: 10px;
+    border-radius: var(--radius-sm);
+}
+
+.resume-entry-links {
+    display: flex;
+    gap: var(--space-8);
+}
+
+.resume-link-icon {
+    color: var(--color-muted);
+    transition: color 0.2s;
+    display: flex;
+    align-items: center;
+}
+
+.resume-link-icon:hover {
+    color: var(--color-text);
+}

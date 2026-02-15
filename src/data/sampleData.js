@@ -29,33 +29,30 @@ const SAMPLE_DATA = {
             description:
                 'Built payment dashboard used by 50K+ merchants. Reduced page load time by 40% through code splitting and lazy loading. Led migration from REST to GraphQL, reducing API calls by 60%.',
         },
-        {
-            id: 'exp-2',
-            company: 'Flipkart',
-            role: 'SDE Intern',
-            startDate: 'Jan 2022',
-            endDate: 'Jun 2022',
-            description:
-                'Developed internal tools for inventory management. Implemented real-time notifications using WebSockets. Wrote unit tests achieving 92% code coverage.',
-        },
     ],
     projects: [
         {
             id: 'proj-1',
-            name: 'DevTracker',
-            tech: 'React, Node.js, MongoDB',
-            description:
-                'A developer productivity tracker with GitHub integration, daily standup logs, and sprint analytics. 500+ active users.',
+            title: 'DevTracker',
+            techStack: ['React', 'Node.js', 'MongoDB', 'GraphQL'],
+            description: 'A developer productivity tracker with GitHub integration and sprint analytics. Optimized database queries for 500+ active users.',
+            liveUrl: 'https://devtracker.demo',
+            githubUrl: 'https://github.com/arjunmehta/devtracker',
         },
         {
             id: 'proj-2',
-            name: 'QuickDeploy CLI',
-            tech: 'Go, Docker, AWS',
-            description:
-                'Open-source CLI tool for one-command deployment to AWS. Featured on Hacker News with 200+ GitHub stars.',
+            title: 'QuickDeploy CLI',
+            techStack: ['Go', 'Docker', 'AWS'],
+            description: 'Open-source CLI tool for one-command deployment to AWS. Achieving 2x faster deployments. Featured on Hacker News.',
+            liveUrl: '',
+            githubUrl: 'https://github.com/arjunmehta/quickdeploy',
         },
     ],
-    skills: 'React, Node.js, TypeScript, Python, PostgreSQL, MongoDB, Docker, AWS, GraphQL, Git, CI/CD, Redis',
+    skills: {
+        technical: ['React', 'Node.js', 'TypeScript', 'PostgreSQL', 'GraphQL', 'Next.js'],
+        soft: ['Technical Leadership', 'Problem Solving', 'Team Mentoring'],
+        tools: ['Git', 'Docker', 'AWS', 'Redis', 'CI/CD']
+    },
     links: {
         github: 'https://github.com/arjunmehta',
         linkedin: 'https://linkedin.com/in/arjunmehta',

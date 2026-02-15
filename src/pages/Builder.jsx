@@ -2,6 +2,7 @@ import { useState, useCallback, useMemo } from 'react'
 import ResumePreview from '../components/ResumePreview'
 import TemplateTabs from '../components/TemplateTabs'
 import BulletGuidance from '../components/BulletGuidance'
+import TagInput from '../components/TagInput'
 import SAMPLE_DATA from '../data/sampleData'
 import { computeATSScore, generateImprovements } from '../utils/atsScoring'
 
@@ -14,7 +15,7 @@ const EMPTY_STATE = {
     education: [],
     experience: [],
     projects: [],
-    skills: '',
+    skills: { technical: [], soft: [], tools: [] },
     links: { github: '', linkedin: '' },
 }
 
@@ -33,7 +34,20 @@ const TEMPLATE_KEY = 'resumeBuilderTemplate'
 function loadData() {
     try {
         const raw = localStorage.getItem(STORAGE_KEY)
-        if (raw) return JSON.parse(raw)
+        if (raw) {
+            const parsed = JSON.parse(raw)
+            // Migration for old skills string format
+            if (typeof parsed.skills === 'string') {
+                parsed.skills = {
+                    technical: parsed.skills.split(',').map(s => s.trim()).filter(Boolean),
+                    soft: [],
+                    tools: []
+                }
+            }
+            // Ensure categorical structure exists
+            if (!parsed.skills) parsed.skills = EMPTY_STATE.skills
+            return parsed
+        }
     } catch { /* ignore */ }
     return EMPTY_STATE
 }
@@ -67,6 +81,8 @@ function getScoreLabel(score) {
 function Builder() {
     const [data, setData] = useState(() => loadData())
     const [template, setTemplate] = useState(() => loadTemplate())
+    const [isSuggesting, setIsSuggesting] = useState(false)
+    const [expandedProjects, setExpandedProjects] = useState({})
 
     const update = useCallback((updater) => {
         setData(prev => {
@@ -163,15 +179,19 @@ function Builder() {
 
     // ---- Projects ----
     const addProject = () => {
+        const newId = generateId('proj')
         update(prev => ({
             ...prev,
             projects: [...prev.projects, {
-                id: generateId('proj'),
-                name: '',
-                tech: '',
+                id: newId,
+                title: '',
                 description: '',
+                techStack: [],
+                liveUrl: '',
+                githubUrl: '',
             }]
         }))
+        setExpandedProjects(prev => ({ ...prev, [newId]: true }))
     }
 
     const updateProject = (id, field, value) => {
@@ -190,9 +210,31 @@ function Builder() {
         }))
     }
 
+    const toggleProject = (id) => {
+        setExpandedProjects(prev => ({ ...prev, [id]: !prev[id] }))
+    }
+
     // ---- Skills ----
-    const setSkills = (value) => {
-        update(prev => ({ ...prev, skills: value }))
+    const setCategorySkills = (category, skills) => {
+        update(prev => ({
+            ...prev,
+            skills: { ...prev.skills, [category]: skills }
+        }))
+    }
+
+    const suggestSkills = () => {
+        setIsSuggesting(true)
+        setTimeout(() => {
+            update(prev => ({
+                ...prev,
+                skills: {
+                    technical: [...new Set([...prev.skills.technical, "TypeScript", "React", "Node.js", "PostgreSQL", "GraphQL"])],
+                    soft: [...new Set([...prev.skills.soft, "Team Leadership", "Problem Solving"])],
+                    tools: [...new Set([...prev.skills.tools, "Git", "Docker", "AWS"])]
+                }
+            }))
+            setIsSuggesting(false)
+        }, 1000)
     }
 
     // ---- Links ----
@@ -215,9 +257,6 @@ function Builder() {
 
     return (
         <div className="builder-layout" id="builder-page">
-            {/* ============================================
-          LEFT: Form Panel
-          ============================================ */}
             <div className="builder-form-panel" id="builder-form">
                 <div className="builder-form-inner">
                     <div className="builder-header">
@@ -233,17 +272,16 @@ function Builder() {
                     </div>
 
                     {/* ---- Section 1: Personal Info ---- */}
-                    <div className="form-section" id="section-personal">
+                    <div className="form-section">
                         <div className="form-section-header">
                             <h3 className="form-section-title">Personal Information</h3>
                             <span className="form-section-num">1</span>
                         </div>
                         <div className="form-row">
                             <div className="form-group">
-                                <label className="input-label" htmlFor="input-name">Full Name</label>
+                                <label className="input-label">Full Name</label>
                                 <input
                                     className="input-field"
-                                    id="input-name"
                                     type="text"
                                     placeholder="John Doe"
                                     value={data.personal.name}
@@ -251,10 +289,9 @@ function Builder() {
                                 />
                             </div>
                             <div className="form-group">
-                                <label className="input-label" htmlFor="input-email">Email</label>
+                                <label className="input-label">Email</label>
                                 <input
                                     className="input-field"
-                                    id="input-email"
                                     type="email"
                                     placeholder="john@example.com"
                                     value={data.personal.email}
@@ -264,10 +301,9 @@ function Builder() {
                         </div>
                         <div className="form-row">
                             <div className="form-group">
-                                <label className="input-label" htmlFor="input-phone">Phone</label>
+                                <label className="input-label">Phone</label>
                                 <input
                                     className="input-field"
-                                    id="input-phone"
                                     type="tel"
                                     placeholder="+91 98765 43210"
                                     value={data.personal.phone}
@@ -275,10 +311,9 @@ function Builder() {
                                 />
                             </div>
                             <div className="form-group">
-                                <label className="input-label" htmlFor="input-location">Location</label>
+                                <label className="input-label">Location</label>
                                 <input
                                     className="input-field"
-                                    id="input-location"
                                     type="text"
                                     placeholder="Bengaluru, India"
                                     value={data.personal.location}
@@ -289,17 +324,16 @@ function Builder() {
                     </div>
 
                     {/* ---- Section 2: Summary ---- */}
-                    <div className="form-section" id="section-summary">
+                    <div className="form-section">
                         <div className="form-section-header">
                             <h3 className="form-section-title">Professional Summary</h3>
                             <span className="form-section-num">2</span>
                         </div>
                         <div className="form-group">
-                            <label className="input-label" htmlFor="input-summary">Summary</label>
+                            <label className="input-label">Summary</label>
                             <textarea
                                 className="input-field"
-                                id="input-summary"
-                                placeholder="A brief professional summary highlighting your key strengths and career goals..."
+                                placeholder="A brief professional summary..."
                                 value={data.summary}
                                 onChange={e => setSummary(e.target.value)}
                                 rows={4}
@@ -308,7 +342,7 @@ function Builder() {
                     </div>
 
                     {/* ---- Section 3: Education ---- */}
-                    <div className="form-section" id="section-education">
+                    <div className="form-section">
                         <div className="form-section-header">
                             <h3 className="form-section-title">Education</h3>
                             <span className="form-section-num">3</span>
@@ -317,71 +351,27 @@ function Builder() {
                             <div className="entry-card" key={entry.id}>
                                 <div className="entry-card-header">
                                     <span className="entry-card-num">Education {idx + 1}</span>
-                                    <button
-                                        className="entry-remove-btn"
-                                        onClick={() => removeEducation(entry.id)}
-                                        aria-label="Remove education entry"
-                                    >
-                                        ✕ Remove
-                                    </button>
+                                    <button className="entry-remove-btn" onClick={() => removeEducation(entry.id)}>✕ Remove</button>
                                 </div>
                                 <div className="form-group">
                                     <label className="input-label">Institution</label>
-                                    <input
-                                        className="input-field"
-                                        placeholder="University Name"
-                                        value={entry.institution}
-                                        onChange={e => updateEducation(entry.id, 'institution', e.target.value)}
-                                    />
+                                    <input className="input-field" placeholder="University" value={entry.institution} onChange={e => updateEducation(entry.id, 'institution', e.target.value)} />
                                 </div>
                                 <div className="form-group">
                                     <label className="input-label">Degree</label>
-                                    <input
-                                        className="input-field"
-                                        placeholder="B.Tech in Computer Science"
-                                        value={entry.degree}
-                                        onChange={e => updateEducation(entry.id, 'degree', e.target.value)}
-                                    />
+                                    <input className="input-field" placeholder="B.Tech" value={entry.degree} onChange={e => updateEducation(entry.id, 'degree', e.target.value)} />
                                 </div>
                                 <div className="form-row">
-                                    <div className="form-group">
-                                        <label className="input-label">Start Date</label>
-                                        <input
-                                            className="input-field"
-                                            placeholder="2018"
-                                            value={entry.startDate}
-                                            onChange={e => updateEducation(entry.id, 'startDate', e.target.value)}
-                                        />
-                                    </div>
-                                    <div className="form-group">
-                                        <label className="input-label">End Date</label>
-                                        <input
-                                            className="input-field"
-                                            placeholder="2022"
-                                            value={entry.endDate}
-                                            onChange={e => updateEducation(entry.id, 'endDate', e.target.value)}
-                                        />
-                                    </div>
-                                </div>
-                                <div className="form-group">
-                                    <label className="input-label">Description</label>
-                                    <textarea
-                                        className="input-field"
-                                        placeholder="Relevant coursework, achievements, CGPA..."
-                                        value={entry.description}
-                                        onChange={e => updateEducation(entry.id, 'description', e.target.value)}
-                                        rows={2}
-                                    />
+                                    <div className="form-group"><label className="input-label">Start</label><input className="input-field" value={entry.startDate} onChange={e => updateEducation(entry.id, 'startDate', e.target.value)} /></div>
+                                    <div className="form-group"><label className="input-label">End</label><input className="input-field" value={entry.endDate} onChange={e => updateEducation(entry.id, 'endDate', e.target.value)} /></div>
                                 </div>
                             </div>
                         ))}
-                        <button className="add-entry-btn" onClick={addEducation} id="btn-add-education">
-                            + Add Education
-                        </button>
+                        <button className="add-entry-btn" onClick={addEducation}>+ Add Education</button>
                     </div>
 
                     {/* ---- Section 4: Experience ---- */}
-                    <div className="form-section" id="section-experience">
+                    <div className="form-section">
                         <div className="form-section-header">
                             <h3 className="form-section-title">Experience</h3>
                             <span className="form-section-num">4</span>
@@ -390,237 +380,180 @@ function Builder() {
                             <div className="entry-card" key={entry.id}>
                                 <div className="entry-card-header">
                                     <span className="entry-card-num">Experience {idx + 1}</span>
-                                    <button
-                                        className="entry-remove-btn"
-                                        onClick={() => removeExperience(entry.id)}
-                                        aria-label="Remove experience entry"
-                                    >
-                                        ✕ Remove
-                                    </button>
+                                    <button className="entry-remove-btn" onClick={() => removeExperience(entry.id)}>✕ Remove</button>
                                 </div>
-                                <div className="form-row">
-                                    <div className="form-group">
-                                        <label className="input-label">Company</label>
-                                        <input
-                                            className="input-field"
-                                            placeholder="Company Name"
-                                            value={entry.company}
-                                            onChange={e => updateExperience(entry.id, 'company', e.target.value)}
-                                        />
-                                    </div>
-                                    <div className="form-group">
-                                        <label className="input-label">Role</label>
-                                        <input
-                                            className="input-field"
-                                            placeholder="Software Engineer"
-                                            value={entry.role}
-                                            onChange={e => updateExperience(entry.id, 'role', e.target.value)}
-                                        />
-                                    </div>
+                                <div className="form-group">
+                                    <label className="input-label">Company</label>
+                                    <input className="input-field" placeholder="Company" value={entry.company} onChange={e => updateExperience(entry.id, 'company', e.target.value)} />
                                 </div>
-                                <div className="form-row">
-                                    <div className="form-group">
-                                        <label className="input-label">Start Date</label>
-                                        <input
-                                            className="input-field"
-                                            placeholder="Jul 2022"
-                                            value={entry.startDate}
-                                            onChange={e => updateExperience(entry.id, 'startDate', e.target.value)}
-                                        />
-                                    </div>
-                                    <div className="form-group">
-                                        <label className="input-label">End Date</label>
-                                        <input
-                                            className="input-field"
-                                            placeholder="Present"
-                                            value={entry.endDate}
-                                            onChange={e => updateExperience(entry.id, 'endDate', e.target.value)}
-                                        />
-                                    </div>
+                                <div className="form-group">
+                                    <label className="input-label">Role</label>
+                                    <input className="input-field" placeholder="Role" value={entry.role} onChange={e => updateExperience(entry.id, 'role', e.target.value)} />
                                 </div>
                                 <div className="form-group">
                                     <label className="input-label">Description</label>
-                                    <textarea
-                                        className="input-field"
-                                        placeholder="Key responsibilities, achievements, impact metrics..."
-                                        value={entry.description}
-                                        onChange={e => updateExperience(entry.id, 'description', e.target.value)}
-                                        rows={3}
-                                    />
+                                    <textarea className="input-field" value={entry.description} onChange={e => updateExperience(entry.id, 'description', e.target.value)} rows={3} />
                                     <BulletGuidance text={entry.description} />
                                 </div>
                             </div>
                         ))}
-                        <button className="add-entry-btn" onClick={addExperience} id="btn-add-experience">
-                            + Add Experience
-                        </button>
+                        <button className="add-entry-btn" onClick={addExperience}>+ Add Experience</button>
                     </div>
 
-                    {/* ---- Section 5: Projects ---- */}
+                    {/* ---- Section 5: Projects (NEW) ---- */}
                     <div className="form-section" id="section-projects">
                         <div className="form-section-header">
                             <h3 className="form-section-title">Projects</h3>
                             <span className="form-section-num">5</span>
                         </div>
                         {data.projects.map((entry, idx) => (
-                            <div className="entry-card" key={entry.id}>
-                                <div className="entry-card-header">
-                                    <span className="entry-card-num">Project {idx + 1}</span>
-                                    <button
-                                        className="entry-remove-btn"
-                                        onClick={() => removeProject(entry.id)}
-                                        aria-label="Remove project entry"
-                                    >
-                                        ✕ Remove
-                                    </button>
-                                </div>
-                                <div className="form-row">
-                                    <div className="form-group">
-                                        <label className="input-label">Project Name</label>
-                                        <input
-                                            className="input-field"
-                                            placeholder="My Awesome Project"
-                                            value={entry.name}
-                                            onChange={e => updateProject(entry.id, 'name', e.target.value)}
-                                        />
-                                    </div>
-                                    <div className="form-group">
-                                        <label className="input-label">Tech Stack</label>
-                                        <input
-                                            className="input-field"
-                                            placeholder="React, Node.js, MongoDB"
-                                            value={entry.tech}
-                                            onChange={e => updateProject(entry.id, 'tech', e.target.value)}
-                                        />
+                            <div className={`accordion-entry ${expandedProjects[entry.id] ? 'accordion-entry--expanded' : ''}`} key={entry.id}>
+                                <div className="accordion-header" onClick={() => toggleProject(entry.id)}>
+                                    <span className="accordion-title">{entry.title || `Project ${idx + 1}`}</span>
+                                    <div className="accordion-controls">
+                                        <button className="entry-remove-btn" onClick={(e) => { e.stopPropagation(); removeProject(entry.id) }}>✕</button>
+                                        <span className="accordion-icon">{expandedProjects[entry.id] ? '−' : '+'}</span>
                                     </div>
                                 </div>
-                                <div className="form-group">
-                                    <label className="input-label">Description</label>
-                                    <textarea
-                                        className="input-field"
-                                        placeholder="What it does, key features, impact..."
-                                        value={entry.description}
-                                        onChange={e => updateProject(entry.id, 'description', e.target.value)}
-                                        rows={2}
-                                    />
-                                    <BulletGuidance text={entry.description} />
-                                </div>
+                                {expandedProjects[entry.id] && (
+                                    <div className="accordion-content">
+                                        <div className="form-group">
+                                            <label className="input-label">Project Title</label>
+                                            <input className="input-field" value={entry.title} onChange={e => updateProject(entry.id, 'title', e.target.value)} placeholder="E-commerce App" />
+                                        </div>
+                                        <div className="form-group">
+                                            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                                <label className="input-label">Description</label>
+                                                <span className={`char-counter ${entry.description?.length > 200 ? 'char-counter--error' : ''}`}>
+                                                    {entry.description?.length || 0}/200
+                                                </span>
+                                            </div>
+                                            <textarea
+                                                className="input-field"
+                                                value={entry.description}
+                                                onChange={e => updateProject(entry.id, 'description', e.target.value)}
+                                                rows={3}
+                                                placeholder="A brief overview..."
+                                            />
+                                            <BulletGuidance text={entry.description} />
+                                        </div>
+                                        <div className="form-group">
+                                            <label className="input-label">Tech Stack</label>
+                                            <TagInput tags={entry.techStack} onChange={tags => updateProject(entry.id, 'techStack', tags)} placeholder="React, Node.js..." />
+                                        </div>
+                                        <div className="form-row">
+                                            <div className="form-group">
+                                                <label className="input-label">Live URL</label>
+                                                <input className="input-field" value={entry.liveUrl} onChange={e => updateProject(entry.id, 'liveUrl', e.target.value)} placeholder="https://..." />
+                                            </div>
+                                            <div className="form-group">
+                                                <label className="input-label">GitHub URL</label>
+                                                <input className="input-field" value={entry.githubUrl} onChange={e => updateProject(entry.id, 'githubUrl', e.target.value)} placeholder="https://github..." />
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         ))}
-                        <button className="add-entry-btn" onClick={addProject} id="btn-add-project">
-                            + Add Project
-                        </button>
+                        <button className="add-entry-btn" onClick={addProject}>+ Add Project</button>
                     </div>
 
-                    {/* ---- Section 6: Skills ---- */}
+                    {/* ---- Section 6: Skills (NEW) ---- */}
                     <div className="form-section" id="section-skills">
                         <div className="form-section-header">
                             <h3 className="form-section-title">Skills</h3>
                             <span className="form-section-num">6</span>
+                            <button
+                                className={`btn-suggest ${isSuggesting ? 'btn-suggest--loading' : ''}`}
+                                onClick={suggestSkills}
+                                disabled={isSuggesting}
+                            >
+                                {isSuggesting ? 'Thinking...' : '✨ Suggest Skills'}
+                            </button>
                         </div>
-                        <div className="form-group">
-                            <label className="input-label" htmlFor="input-skills">Skills (comma-separated)</label>
-                            <input
-                                className="input-field"
-                                id="input-skills"
-                                type="text"
-                                placeholder="React, Node.js, Python, Docker, AWS..."
-                                value={data.skills}
-                                onChange={e => setSkills(e.target.value)}
-                            />
-                            <span className="input-hint">Separate each skill with a comma</span>
+
+                        <div className="skill-category-group">
+                            <div className="form-group">
+                                <label className="input-label">Technical Skills ({data.skills.technical?.length || 0})</label>
+                                <TagInput
+                                    tags={data.skills.technical}
+                                    onChange={tags => setCategorySkills('technical', tags)}
+                                    placeholder="Add technical skills..."
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label className="input-label">Soft Skills ({data.skills.soft?.length || 0})</label>
+                                <TagInput
+                                    tags={data.skills.soft}
+                                    onChange={tags => setCategorySkills('soft', tags)}
+                                    placeholder="Add soft skills..."
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label className="input-label">Tools & Technologies ({data.skills.tools?.length || 0})</label>
+                                <TagInput
+                                    tags={data.skills.tools}
+                                    onChange={tags => setCategorySkills('tools', tags)}
+                                    placeholder="Add tools & technologies..."
+                                />
+                            </div>
                         </div>
                     </div>
 
                     {/* ---- Section 7: Links ---- */}
-                    <div className="form-section" id="section-links">
+                    <div className="form-section">
                         <div className="form-section-header">
                             <h3 className="form-section-title">Links</h3>
                             <span className="form-section-num">7</span>
                         </div>
                         <div className="form-row">
                             <div className="form-group">
-                                <label className="input-label" htmlFor="input-github">GitHub</label>
-                                <input
-                                    className="input-field"
-                                    id="input-github"
-                                    type="url"
-                                    placeholder="https://github.com/username"
-                                    value={data.links.github}
-                                    onChange={e => setLink('github', e.target.value)}
-                                />
+                                <label className="input-label">GitHub</label>
+                                <input className="input-field" type="url" value={data.links.github} onChange={e => setLink('github', e.target.value)} />
                             </div>
                             <div className="form-group">
-                                <label className="input-label" htmlFor="input-linkedin">LinkedIn</label>
-                                <input
-                                    className="input-field"
-                                    id="input-linkedin"
-                                    type="url"
-                                    placeholder="https://linkedin.com/in/username"
-                                    value={data.links.linkedin}
-                                    onChange={e => setLink('linkedin', e.target.value)}
-                                />
+                                <label className="input-label">LinkedIn</label>
+                                <input className="input-field" type="url" value={data.links.linkedin} onChange={e => setLink('linkedin', e.target.value)} />
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            {/* ============================================
-          RIGHT: Live Preview Panel + ATS Score
-          ============================================ */}
-            <div className="builder-preview-panel" id="builder-preview">
-                {/* ---- ATS Score Meter ---- */}
-                <div className="ats-score-card" id="ats-score-card">
+            <div className="builder-preview-panel">
+                <div className="ats-score-card">
                     <div className="ats-score-header">
                         <span className="ats-score-label">ATS Readiness Score</span>
                         <span className={`ats-score-status ${scoreLabel.className}`}>{scoreLabel.text}</span>
                     </div>
-                    <div className="ats-meter" id="ats-meter">
+                    <div className="ats-meter">
                         <div className="ats-meter-track">
-                            <div
-                                className="ats-meter-fill"
-                                style={{ width: `${(atsResult.score / atsResult.maxPossible) * 100}%` }}
-                            ></div>
+                            <div className="ats-meter-fill" style={{ width: `${(atsResult.score / atsResult.maxPossible) * 100}%` }}></div>
                         </div>
                         <div className="ats-meter-value">
                             <span className="ats-meter-number">{atsResult.score}</span>
                             <span className="ats-meter-max">/ {atsResult.maxPossible}</span>
                         </div>
                     </div>
-
-                    {/* ---- Breakdown ---- */}
-                    <div className="ats-breakdown" id="ats-breakdown">
+                    <div className="ats-breakdown">
                         {atsResult.breakdown.map((item, i) => (
                             <div className="ats-breakdown-row" key={i}>
-                                <span className={`ats-breakdown-dot ${item.earned > 0 ? 'ats-breakdown-dot--earned' : ''}`}>
-                                    {item.earned > 0 ? '✓' : '○'}
-                                </span>
+                                <span className={`ats-breakdown-dot ${item.earned > 0 ? 'ats-breakdown-dot--earned' : ''}`}>{item.earned > 0 ? '✓' : '○'}</span>
                                 <span className="ats-breakdown-label">{item.label}</span>
-                                <span className={`ats-breakdown-pts ${item.earned > 0 ? 'ats-breakdown-pts--earned' : ''}`}>
-                                    +{item.earned}
-                                </span>
+                                <span className={`ats-breakdown-pts ${item.earned > 0 ? 'ats-breakdown-pts--earned' : ''}`}>+{item.earned}</span>
                             </div>
                         ))}
                     </div>
-
-                    {/* ---- Top 3 Improvements ---- */}
                     {improvements.length > 0 && (
-                        <div className="ats-improvements" id="ats-improvements">
+                        <div className="ats-improvements">
                             <span className="ats-improvements-title">Top 3 Improvements</span>
                             <ul className="ats-improvements-list">
-                                {improvements.map((s, i) => (
-                                    <li className="ats-improvement-item" key={i}>{s}</li>
-                                ))}
+                                {improvements.map((s, i) => <li className="ats-improvement-item" key={i}>{s}</li>)}
                             </ul>
                         </div>
                     )}
                 </div>
-
-                {/* ---- Template Tabs ---- */}
                 <TemplateTabs selected={template} onSelect={handleTemplateChange} />
-
-                {/* ---- Preview ---- */}
                 <div className="preview-panel-header">
                     <span className="preview-panel-title">Live Preview</span>
                     <span className="preview-panel-badge">Real-time</span>

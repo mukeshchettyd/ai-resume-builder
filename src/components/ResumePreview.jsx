@@ -1,11 +1,11 @@
 /* ================================================================
    ResumePreview — Live Preview Component
    Renders the structured resume from form data.
-   Used in both Builder (side panel) and Preview page (full page).
+   Supports 3 templates: classic, modern, minimal.
    Empty sections are hidden — only populated sections render.
    ================================================================ */
 
-function ResumePreview({ data }) {
+function ResumePreview({ data, template = 'classic' }) {
     const { personal, summary, education, experience, projects, skills, links } = data
 
     const skillList = skills
@@ -14,8 +14,10 @@ function ResumePreview({ data }) {
 
     const hasAnyContact = personal.email || personal.phone || personal.location
 
+    const shellClass = `resume-shell resume-tpl--${template}`
+
     return (
-        <div className="resume-shell" id="resume-preview">
+        <div className={shellClass} id="resume-preview">
             {/* ---- Header ---- */}
             <div className="resume-header">
                 <h2 className="resume-name">

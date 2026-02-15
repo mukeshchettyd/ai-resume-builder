@@ -107,61 +107,47 @@ export function computeATSScore(data) {
 }
 
 /* ================================================================
-   Suggestions — max 3 actionable items
+   Top 3 Improvements — max 3 actionable items
    ================================================================ */
-export function generateSuggestions(data) {
-    const suggestions = []
+export function generateImprovements(data) {
+    const items = []
 
-    // Summary
-    const summaryWords = wordCount(data.summary)
-    if (summaryWords < 40) {
-        suggestions.push('Write a stronger summary (target 40–120 words).')
-    } else if (summaryWords > 120) {
-        suggestions.push('Trim your summary to under 120 words for ATS readability.')
-    }
-
-    // Projects
+    // If <2 projects → suggest adding project
     if (data.projects.length < 2) {
-        suggestions.push('Add at least 2 projects.')
+        items.push('Add at least 2 projects to strengthen your profile.')
     }
 
-    // Experience
-    if (data.experience.length < 1) {
-        suggestions.push('Add at least 1 work experience entry.')
-    }
-
-    // Skills
-    const skillList = data.skills
-        ? data.skills.split(',').map(s => s.trim()).filter(Boolean)
-        : []
-    if (skillList.length < 8) {
-        suggestions.push('Add more skills (target 8+).')
-    }
-
-    // Links
-    if (!data.links.github && !data.links.linkedin) {
-        suggestions.push('Add a GitHub or LinkedIn profile link.')
-    }
-
-    // Metrics
+    // If no numbers in bullets → suggest measurable impact
     const allBullets = [
         ...data.experience.map(e => e.description),
         ...data.projects.map(p => p.description),
     ]
     if (!allBullets.some(hasMetrics)) {
-        suggestions.push('Add measurable impact (numbers like %, 50K+, 3x) in your bullets.')
+        items.push('Add measurable impact (numbers like %, 50K+, 3x) in your bullets.')
     }
 
-    // Education
-    const hasCompleteEdu = data.education.some(
-        e => e.institution && e.degree && e.startDate && e.endDate
-    )
-    if (!hasCompleteEdu && data.education.length > 0) {
-        suggestions.push('Complete all fields in at least one education entry.')
-    } else if (data.education.length === 0) {
-        suggestions.push('Add an education entry with all fields filled.')
+    // If summary <40 words → suggest expanding
+    const summaryWords = wordCount(data.summary)
+    if (summaryWords < 40) {
+        items.push('Expand your summary to 40–120 words for better ATS performance.')
+    }
+
+    // If skills <8 → suggest expanding
+    const skillList = data.skills
+        ? data.skills.split(',').map(s => s.trim()).filter(Boolean)
+        : []
+    if (skillList.length < 8) {
+        items.push('Add more skills — target at least 8 for stronger keyword matching.')
+    }
+
+    // If no experience → suggest adding internship/project work
+    if (data.experience.length < 1) {
+        items.push('Add an internship or work experience entry.')
     }
 
     // Return max 3
-    return suggestions.slice(0, 3)
+    return items.slice(0, 3)
 }
+
+// Keep backward compat alias
+export const generateSuggestions = generateImprovements

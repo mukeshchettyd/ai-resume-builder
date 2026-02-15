@@ -1,7 +1,9 @@
 import { useState, useCallback, useMemo } from 'react'
 import ResumePreview from '../components/ResumePreview'
+import TemplateTabs from '../components/TemplateTabs'
+import BulletGuidance from '../components/BulletGuidance'
 import SAMPLE_DATA from '../data/sampleData'
-import { computeATSScore, generateSuggestions } from '../utils/atsScoring'
+import { computeATSScore, generateImprovements } from '../utils/atsScoring'
 
 /* ================================================================
    EMPTY STATE
@@ -23,9 +25,10 @@ function generateId(prefix) {
 }
 
 /* ================================================================
-   STORAGE — key: resumeBuilderData
+   STORAGE
    ================================================================ */
 const STORAGE_KEY = 'resumeBuilderData'
+const TEMPLATE_KEY = 'resumeBuilderTemplate'
 
 function loadData() {
     try {
@@ -37,6 +40,16 @@ function loadData() {
 
 function saveData(data) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
+}
+
+function loadTemplate() {
+    try {
+        return localStorage.getItem(TEMPLATE_KEY) || 'classic'
+    } catch { return 'classic' }
+}
+
+function saveTemplate(tpl) {
+    localStorage.setItem(TEMPLATE_KEY, tpl)
 }
 
 /* ================================================================
@@ -53,6 +66,7 @@ function getScoreLabel(score) {
    ================================================================ */
 function Builder() {
     const [data, setData] = useState(() => loadData())
+    const [template, setTemplate] = useState(() => loadTemplate())
 
     const update = useCallback((updater) => {
         setData(prev => {
@@ -62,9 +76,14 @@ function Builder() {
         })
     }, [])
 
+    const handleTemplateChange = (tpl) => {
+        setTemplate(tpl)
+        saveTemplate(tpl)
+    }
+
     // ---- ATS Score (computed live) ----
     const atsResult = useMemo(() => computeATSScore(data), [data])
-    const suggestions = useMemo(() => generateSuggestions(data), [data])
+    const improvements = useMemo(() => generateImprovements(data), [data])
     const scoreLabel = getScoreLabel(atsResult.score)
 
     // ---- Personal ----
@@ -428,6 +447,7 @@ function Builder() {
                                         onChange={e => updateExperience(entry.id, 'description', e.target.value)}
                                         rows={3}
                                     />
+                                    <BulletGuidance text={entry.description} />
                                 </div>
                             </div>
                         ))}
@@ -483,6 +503,7 @@ function Builder() {
                                         onChange={e => updateProject(entry.id, 'description', e.target.value)}
                                         rows={2}
                                     />
+                                    <BulletGuidance text={entry.description} />
                                 </div>
                             </div>
                         ))}
@@ -583,25 +604,28 @@ function Builder() {
                         ))}
                     </div>
 
-                    {/* ---- Suggestions ---- */}
-                    {suggestions.length > 0 && (
-                        <div className="ats-suggestions" id="ats-suggestions">
-                            <span className="ats-suggestions-title">Suggestions</span>
-                            <ul className="ats-suggestions-list">
-                                {suggestions.map((s, i) => (
-                                    <li className="ats-suggestion-item" key={i}>{s}</li>
+                    {/* ---- Top 3 Improvements ---- */}
+                    {improvements.length > 0 && (
+                        <div className="ats-improvements" id="ats-improvements">
+                            <span className="ats-improvements-title">Top 3 Improvements</span>
+                            <ul className="ats-improvements-list">
+                                {improvements.map((s, i) => (
+                                    <li className="ats-improvement-item" key={i}>{s}</li>
                                 ))}
                             </ul>
                         </div>
                     )}
                 </div>
 
+                {/* ---- Template Tabs ---- */}
+                <TemplateTabs selected={template} onSelect={handleTemplateChange} />
+
                 {/* ---- Preview ---- */}
                 <div className="preview-panel-header">
                     <span className="preview-panel-title">Live Preview</span>
                     <span className="preview-panel-badge">Real-time</span>
                 </div>
-                <ResumePreview data={data} />
+                <ResumePreview data={data} template={template} />
             </div>
         </div>
     )

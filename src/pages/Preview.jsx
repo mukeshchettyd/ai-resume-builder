@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import ResumePreview from '../components/ResumePreview'
+import TemplateTabs from '../components/TemplateTabs'
 
 const STORAGE_KEY = 'resumeBuilderData'
+const TEMPLATE_KEY = 'resumeBuilderTemplate'
 
 const EMPTY_STATE = {
     personal: { name: '', email: '', phone: '', location: '' },
@@ -22,8 +24,24 @@ function loadData() {
     return EMPTY_STATE
 }
 
+function loadTemplate() {
+    try {
+        return localStorage.getItem(TEMPLATE_KEY) || 'classic'
+    } catch { return 'classic' }
+}
+
+function saveTemplate(tpl) {
+    localStorage.setItem(TEMPLATE_KEY, tpl)
+}
+
 function Preview() {
     const [data] = useState(() => loadData())
+    const [template, setTemplate] = useState(() => loadTemplate())
+
+    const handleTemplateChange = (tpl) => {
+        setTemplate(tpl)
+        saveTemplate(tpl)
+    }
 
     const hasData =
         data.personal.name ||
@@ -51,7 +69,9 @@ function Preview() {
                 </div>
             )}
 
-            <ResumePreview data={data} />
+            <TemplateTabs selected={template} onSelect={handleTemplateChange} />
+
+            <ResumePreview data={data} template={template} />
         </div>
     )
 }

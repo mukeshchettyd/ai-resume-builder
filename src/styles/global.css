@@ -2306,3 +2306,191 @@ textarea.input-field {
     background-color: #f3f4f6;
     color: var(--color-text);
 }
+
+/* ================================================================
+   PROOF & SUBMISSION PAGE
+   ================================================================ */
+.proof-page {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: var(--space-48) var(--space-24);
+}
+
+.proof-header {
+    margin-bottom: var(--space-48);
+    text-align: center;
+}
+
+.proof-title {
+    font-size: var(--text-3xl);
+    font-weight: 800;
+    color: var(--color-text);
+    margin-bottom: var(--space-8);
+}
+
+.proof-subtitle {
+    color: var(--color-muted);
+}
+
+.proof-section {
+    background-color: var(--color-card-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    padding: var(--space-32);
+    margin-bottom: var(--space-32);
+    box-shadow: var(--shadow-sm);
+}
+
+.proof-section-title {
+    font-size: var(--text-lg);
+    font-weight: 700;
+    margin-bottom: var(--space-24);
+    display: flex;
+    align-items: center;
+    gap: var(--space-12);
+}
+
+.proof-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--space-16);
+}
+
+.status-card {
+    padding: var(--space-16);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: all 0.2s;
+    background: #fff;
+}
+
+.status-card--done {
+    border-color: #10b981;
+    background-color: #f0fdf4;
+}
+
+.status-label {
+    font-size: var(--text-sm);
+    font-weight: 600;
+}
+
+.status-checkbox {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+/* Artifact Inputs */
+.artifact-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-20);
+}
+
+.artifact-field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+}
+
+.artifact-label {
+    font-size: var(--text-xs);
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--color-muted);
+}
+
+.artifact-input {
+    width: 100%;
+    padding: var(--space-12);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background-color: var(--color-bg);
+    font-size: var(--text-sm);
+    transition: border-color 0.2s;
+}
+
+.artifact-input:focus {
+    border-color: var(--color-text);
+    outline: none;
+}
+
+.artifact-input--invalid {
+    border-color: #ef4444;
+}
+
+/* Ship Status */
+.ship-status-banner {
+    padding: var(--space-24);
+    border-radius: var(--radius-lg);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-12);
+}
+
+.ship-status-banner--progress {
+    background-color: #fef3c7;
+    color: #92400e;
+}
+
+.ship-status-banner--shipped {
+    background-color: #ecfdf5;
+    color: #065f46;
+}
+
+.ship-badge {
+    padding: var(--space-4) var(--space-12);
+    border-radius: var(--radius-full);
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: var(--text-xs);
+}
+
+.ship-badge--progress {
+    background-color: #fde68a;
+}
+
+.ship-badge--shipped {
+    background-color: #6ee7b7;
+    color: #064e3b;
+}
+
+.ship-msg {
+    font-weight: 600;
+    font-size: var(--text-sm);
+}
+
+.ship-final-msg {
+    font-size: var(--text-lg);
+    font-weight: 700;
+    color: #065f46;
+    margin-top: var(--space-8);
+}
+
+/* Utils */
+.btn-copy-submission {
+    margin-top: var(--space-24);
+    width: 100%;
+    background-color: var(--color-text);
+    color: #fff;
+    padding: var(--space-16);
+    border: none;
+    border-radius: var(--radius-lg);
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.btn-copy-submission:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.btn-copy-submission:hover:not(:disabled) {
+    opacity: 0.9;
+}

@@ -116,7 +116,16 @@ function Builder() {
     // ---- ATS Score ----
     const atsResult = useMemo(() => computeATSScore(data), [data])
     const improvements = useMemo(() => generateImprovements(data), [data])
-    const scoreLabel = getScoreLabel(atsResult.score)
+
+    const getScoreDisplay = (score) => {
+        if (score >= 71) return { text: 'Strong Resume', color: 'green' }
+        if (score >= 41) return { text: 'Getting There', color: 'amber' }
+        return { text: 'Needs Work', color: 'red' }
+    }
+
+    const scoreInfo = getScoreDisplay(atsResult.score)
+    const circleCircumference = 2 * Math.PI * 40
+    const dashOffset = circleCircumference - (atsResult.score / 100) * circleCircumference
 
     // ---- Handlers ----
     const setPersonal = (field, value) => update(prev => ({ ...prev, personal: { ...prev.personal, [field]: value } }))
@@ -291,16 +300,39 @@ function Builder() {
                 </div>
 
                 <div className="ats-score-card">
-                    <div className="ats-score-header">
-                        <span className="ats-score-label">ATS Readiness</span>
-                        <span className={`ats-score-status ${scoreLabel.className}`}>{scoreLabel.text}</span>
+                    <div className="ats-circular-box">
+                        <div className="circular-score">
+                            <svg className="circular-score-svg" viewBox="0 0 100 100">
+                                <circle className="circular-score-bg" cx="50" cy="50" r="40" />
+                                <circle
+                                    className={`circular-score-fill score-${scoreInfo.color}`}
+                                    cx="50" cy="50" r="40"
+                                    strokeDasharray={circleCircumference}
+                                    strokeDashoffset={dashOffset}
+                                />
+                            </svg>
+                            <div className="circular-score-text">
+                                <span className={`score-num score-${scoreInfo.color}`}>{atsResult.score}</span>
+                                <span className="score-total">/100</span>
+                            </div>
+                        </div>
+                        <span className={`ats-status-badge badge-${scoreInfo.color}`}>{scoreInfo.text}</span>
                     </div>
-                    <div className="ats-meter">
-                        <div className="ats-meter-track"><div className="ats-meter-fill" style={{ width: `${(atsResult.score / atsResult.maxPossible) * 100}%` }}></div></div>
-                        <div className="ats-meter-value"><span>{atsResult.score}</span>/ {atsResult.maxPossible}</div>
-                    </div>
-                    <button className="btn btn-primary btn-full" style={{ marginTop: '20px', backgroundColor: accentColor, color: '#fff', border: 'none' }} onClick={handleDownload}>
-                        Download PDF
+
+                    {improvements.length > 0 && (
+                        <div className="ats-improvements">
+                            <span className="ats-improvements-title">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                                Suggestions to improve
+                            </span>
+                            <ul className="ats-improvements-list">
+                                {improvements.map((s, i) => <li className="ats-improvement-item" key={i}>{s}</li>)}
+                            </ul>
+                        </div>
+                    )}
+
+                    <button className="btn btn-primary btn-full" style={{ marginTop: '24px', backgroundColor: accentColor, color: '#fff', border: 'none' }} onClick={handleDownload}>
+                        Download Professional PDF
                     </button>
                 </div>
 

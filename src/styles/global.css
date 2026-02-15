@@ -2154,3 +2154,155 @@ textarea.input-field {
         display: none !important;
     }
 }
+
+/* ================================================================
+   NEW ATS CIRCULAR PROGRESS & SUGGESTIONS
+   ================================================================ */
+
+.ats-score-card {
+    padding: var(--space-24);
+    background: #fff;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: var(--space-32);
+}
+
+.ats-circular-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-12);
+    margin-bottom: var(--space-24);
+}
+
+.circular-score {
+    position: relative;
+    width: 100px;
+    height: 100px;
+}
+
+.circular-score-svg {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+}
+
+.circular-score-bg {
+    fill: none;
+    stroke: #eee;
+    stroke-width: 8;
+}
+
+.circular-score-fill {
+    fill: none;
+    stroke-width: 8;
+    stroke-linecap: round;
+    transition: stroke-dasharray 0.6s ease-out, stroke 0.3s;
+}
+
+.circular-score-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.score-num {
+    font-size: var(--text-2xl);
+    font-weight: 800;
+    line-height: 1;
+}
+
+.score-total {
+    font-size: 10px;
+    color: var(--color-muted);
+}
+
+.ats-status-badge {
+    padding: var(--space-4) var(--space-12);
+    border-radius: var(--radius-full);
+    font-size: var(--text-xs);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+}
+
+/* Range Colors */
+.score-red {
+    stroke: #ef4444;
+    color: #ef4444;
+}
+
+.badge-red {
+    background-color: #fee2e2;
+    color: #ef4444;
+}
+
+.score-amber {
+    stroke: #f59e0b;
+    color: #f59e0b;
+}
+
+.badge-amber {
+    background-color: #fef3c7;
+    color: #d97706;
+}
+
+.score-green {
+    stroke: #10b981;
+    color: #10b981;
+}
+
+.badge-green {
+    background-color: #d1fae5;
+    color: #059669;
+}
+
+/* Suggestions */
+.ats-improvements-title {
+    font-size: var(--text-xs);
+    font-weight: 700;
+    color: var(--color-text);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+    margin-bottom: var(--space-12);
+    display: flex;
+    align-items: center;
+    gap: var(--space-8);
+}
+
+.ats-improvements-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.ats-improvement-item {
+    padding: var(--space-10) var(--space-12);
+    background-color: #f9fafb;
+    border: 1px dashed var(--color-border);
+    border-radius: var(--radius-md);
+    font-size: var(--text-xs);
+    color: var(--color-muted);
+    display: flex;
+    gap: var(--space-8);
+}
+
+.ats-improvement-item::before {
+    content: '+';
+    color: var(--color-muted);
+    font-weight: 700;
+}
+
+.ats-improvement-item:hover {
+    border-color: #d1d5db;
+    background-color: #f3f4f6;
+    color: var(--color-text);
+}

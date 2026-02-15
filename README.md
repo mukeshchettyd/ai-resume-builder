@@ -1,16 +1,61 @@
-# React + Vite
+# AI Resume Builder
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+> **Project 3** — KodNest Premium Build System
 
-Currently, two official plugins are available:
+**Build a Resume That Gets Read.**
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+A premium, clean, calm webapp for crafting professional resumes. Built with KodNest Premium Design System conventions — no noise, no clutter, just intentional design.
 
-## React Compiler
+## 🔗 Live Link
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+**[https://mukeshchettyd.github.io/ai-resume-builder/](https://mukeshchettyd.github.io/ai-resume-builder/)**
 
-## Expanding the ESLint configuration
+## Routes
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+| Route | Page | Description |
+|-------|------|-------------|
+| `/` | Home | Landing page with CTA |
+| `/builder` | Builder | Two-column form + live preview |
+| `/preview` | Preview | Clean full-page resume display |
+| `/proof` | Proof | Artifact collection placeholder |
+
+## Features (Skeleton)
+
+- **Home**: Premium landing with "Start Building" CTA
+- **Builder**: 7-section form (Personal, Summary, Education, Experience, Projects, Skills, Links)
+  - Add/remove multiple entries for Education, Experience, Projects
+  - Live preview in right panel
+  - "Load Sample Data" button with realistic resume
+  - Data persists to localStorage
+- **Preview**: Full-page clean resume — black + white, premium typography
+- **Proof**: Artifact placeholders for future submission
+
+## Design System
+
+Following KodNest Premium conventions:
+- Playfair Display headings + Inter body text
+- 4 semantic colors + neutrals
+- 8px spacing scale
+- 150-200ms transitions only
+- No gradients, no glassmorphism, no animation noise
+
+## Tech Stack
+
+- React 19 + React Router 7
+- Vite 7
+- Vanilla CSS with design tokens
+- localStorage persistence
+- GitHub Pages deployment
+
+## Getting Started
+
+```bash
+git clone https://github.com/mukeshchettyd/ai-resume-builder.git
+cd ai-resume-builder
+npm install
+npm run dev
+```
+
+## License
+
+MIT
